@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>23813 · Caja 05/05</title>
+<style>
+  :root{
+    --ink:#0a1f2e; --steel:#1e3a4c; --line:#c9d4db;
+    --amber:#e8a33d; --paper:#f5f3ee; --white:#ffffff;
+    --ok:#1f8a5b; --muted:#5b6b75;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:var(--paper); color:var(--ink);
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+    padding:20px; display:flex; justify-content:center;
+  }
+  .card{
+    width:100%; max-width:680px; background:var(--white);
+    border:1px solid var(--line); border-radius:4px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(10,31,46,.08);
+  }
+  header{
+    background:var(--ink); color:var(--white);
+    padding:22px 26px; display:flex; align-items:center;
+    justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+  header .brand{font-size:22px; font-weight:800; letter-spacing:.5px}
+  header .brand span{color:var(--amber)}
+  header .box{
+    font-size:13px; font-weight:600; background:var(--amber);
+    color:var(--ink); padding:4px 12px; border-radius:3px;
+  }
+  .meta{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    border-bottom:1px solid var(--line);
+  }
+  .meta div{
+    padding:14px 20px; border-right:1px solid var(--line);
+  }
+  .meta div:last-child{border-right:none}
+  .meta .k{font-size:11px; text-transform:uppercase; letter-spacing:.8px;
+    color:var(--muted); font-weight:700; margin-bottom:3px}
+  .meta .v{font-size:17px; font-weight:700; font-variant-numeric:tabular-nums}
+  .actions{
+    display:flex; gap:10px; padding:18px 20px; flex-wrap:wrap;
+    border-bottom:1px solid var(--line);
+  }
+  .btn{
+    flex:1; min-width:150px; text-align:center; cursor:pointer;
+    font-size:15px; font-weight:600; padding:13px 18px; border-radius:3px;
+    border:none; transition:transform .05s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--steel); color:var(--white)}
+  .btn-download{background:var(--amber); color:var(--ink)}
+  #list{padding:8px 0 12px; display:none}
+  #list.show{display:block}
+  .serial{
+    display:flex; align-items:center; gap:14px;
+    padding:9px 24px; font-variant-numeric:tabular-nums;
+    border-bottom:1px solid #eef1ee; font-size:15px;
+  }
+  .serial:nth-child(even){background:#faf9f6}
+  .serial .n{color:var(--muted); font-size:12px; width:34px;
+    text-align:right; font-weight:600}
+  .foot{padding:14px 24px; font-size:12px; color:var(--muted);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <div class="brand">DORLET <span>QR's</span></div>
+      <div class="box">CAJA Nº 05/05</div>
+    </header>
+
+    <div class="meta">
+      <div><div class="k">Código</div><div class="v">23813</div></div>
+      <div><div class="k">OF</div><div class="v">65099</div></div>
+      <div><div class="k">Modelo</div><div class="v">Control EVO20-40</div></div>
+      <div><div class="k">Caja</div><div class="v">05/05</div></div>
+      <div><div class="k">Cantidad OF</div><div class="v">450</div></div>
+      <div><div class="k">En esta caja</div><div class="v">10</div></div>
+      <div><div class="k">Total cajas</div><div class="v">5</div></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="toggleList()">Ver seriales</button>
+      <button class="btn btn-download" onclick="descargar()">Descargar .txt</button>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="foot">
+      <span>DORLET QR's · Registro de caja</span>
+      <span id="count"></span>
+    </div>
+  </div>
+
+<script>
+  // Los seriales se inyectan aquí como array JSON
+  const SERIALES = ["61983000573", "61983000571", "61983000570", "61983000569", "61983000568", "61983000567", "61983000566", "61983000564", "61983000572", "61983000565"];
+  const CABECERA = {
+    codigo: "23813", of: "65099",
+    modelo: "Control EVO20-40", caja: "05/05", cantidad: "10"
+  };
+
+  document.getElementById("count").textContent =
+    SERIALES.length + " seriales";
+
+  function toggleList(){
+    const list = document.getElementById("list");
+    if(list.classList.contains("show")){
+      list.classList.remove("show");
+      return;
+    }
+    if(!list.dataset.filled){
+      list.innerHTML = SERIALES.map((s,i)=>
+        `<div class="serial"><span class="n">${i+1}</span><span>${s}</span></div>`
+      ).join("");
+      list.dataset.filled = "1";
+    }
+    list.classList.add("show");
+  }
+
+  function descargar(){
+    const lineas = [
+      "CODIGO:" + CABECERA.codigo,
+      "OF:" + CABECERA.of,
+      "MODELO:" + CABECERA.modelo,
+      "CAJA:" + CABECERA.caja,
+      "CANTIDAD:" + CABECERA.cantidad,
+      ...SERIALES
+    ];
+    const blob = new Blob([lineas.join("\r\n")], {type:"text/plain"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "CAJA_" + CABECERA.caja + "_" + CABECERA.codigo + ".txt";
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
